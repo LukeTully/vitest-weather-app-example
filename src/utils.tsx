@@ -1,4 +1,7 @@
 import { Weather } from './components/day-tile'
+import Berlin from './assets/static/mock-responses/berlin-forecast.json';
+import Vancouver from './assets/static/mock-responses/vancouver-forecast.json';
+import Madrid from './assets/static/mock-responses/madrid-forecast.json';
 
 export const getDayOfWeekFromTimestamp = (
   timestamp: number,
@@ -26,18 +29,29 @@ export interface OpenWeatherMapResponseItem {
     main: string
     description: string
     icon: string
-  }
+  }[]
   dt: number
-  temp: number
 }
 
+type DailyResponseItem = (OpenWeatherMapResponseItem & {
+  temp: {
+    day: number
+    min: number
+    max: number
+    night: number
+    eve: number
+    morn: number
+  }
+})
+
+type CurrentResponseItem = OpenWeatherMapResponseItem & { temp: number }
 export interface OpenWeatherMapResponseFull {
   lon: number
   lat: number
   timezone: string
   timezone_offset: number
-  current: OpenWeatherMapResponseItem
-  daily: OpenWeatherMapResponseItem[]
+  current: CurrentResponseItem
+  daily: DailyResponseItem[]
 }
 
 /* Custom mapping of Api response properties */
@@ -46,6 +60,13 @@ export interface CityForecast {
   daily: Weather[]
 }
 
+const staticCityCoordinateMapping: {
+  [key: string]: [number, number],
+} = {
+  'vancouver': [49.246292, -123.116226],
+  'madrid': [40.398033, -3.710935],
+  'berlin': [52.531677, 13.381777],
+}
 export const fetchForecastForLatLng = async (
   latlng: number[],
 ): Promise<OpenWeatherMapResponseFull> => {
@@ -124,30 +145,28 @@ export const fetchForecastForLatLng = async (
 
 
 /* Mock api for testing against real but static data */
-export const weatherForCity = async (city: string): Promise<CityForecast> => {
-  const staticCityCoordinateMapping: {
-    [key: string]: number[],
-  } = {
-    'Vancouver': [49.246292, -123.116226],
-    'Madrid': [40.398033, -3.710935],
-    'Berlin': [52.531677, 13.381777],
-  }
+type ForecastFetcher = (city: string) => Promise<OpenWeatherMapResponseFull>
+export const weatherForCity = async (city: string, fetchForecast: ForecastFetcher): Promise<CityForecast> => {
 
-  const weatherResponse: OpenWeatherMapResponseFull = await fetchForecastForLatLng(staticCityCoordinateMapping[city])
+  const weatherResponse: OpenWeatherMapResponseFull = await fetchForecast(city)
 
-  const remapResponseProps = (original: OpenWeatherMapResponseItem): Weather => {
+  const remapResponseProps = (original: CurrentResponseItem | DailyResponseItem): Weather => {
+    const isCurrentTemp = (responseItem: CurrentResponseItem | DailyResponseItem): responseItem is DailyResponseItem => {
+      return responseItem.temp.hasOwnProperty('day')
+    }
     return {
-      temp: original.temp,
+      temp: isCurrentTemp(original) ? original.temp.day : original.temp,
       time: original.dt,
-      primaryDescriptor: original.weather.main,
-      secondaryDescriptor: original.weather.description,
-      iconCode: original.weather.icon,
+      primaryDescriptor: original.weather[0].main,
+      secondaryDescriptor: original.weather[0].description,
+      iconCode: original.weather[0].icon,
     }
   }
   return {
+    timezone: weatherResponse.timezone,
     current: remapResponseProps(weatherResponse.current),
     daily: [
-      ...weatherResponse.daily.map((dailyWeatherItem: OpenWeatherMapResponseItem): Weather => remapResponseProps(dailyWeatherItem)),
+      ...weatherResponse.daily.map((dailyWeatherItem: DailyResponseItem): Weather => remapResponseProps(dailyWeatherItem)),
     ],
   }
 
