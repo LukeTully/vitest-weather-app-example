@@ -4,8 +4,20 @@ export const getDayOfWeekFromTimestamp = (
   timestamp: number,
   timezone: string,
 ): string => {
+  const daysOfWeek: {
+    [key: number]: string
+  } = {
+    0: 'Sun',
+    1: 'Mon',
+    2: 'Tues',
+    3: 'Wed',
+    4: 'Thurs',
+    5: 'Fri',
+    6: 'Sat',
+  }
   /* Accepts a Unix timestamp, and timezone, and returns the day of the week */
-  return ''
+  const date = new Date(timestamp * 1000)
+  return daysOfWeek[date.getDay()]
 }
 
 export interface OpenWeatherMapResponseItem {
