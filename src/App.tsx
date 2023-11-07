@@ -19,11 +19,12 @@ interface AppState {
 
 interface CitySelectorProps {
   onSelect: (cityName: string) => void
+  id: string
 }
-export function CitySelector (props: CitySelectorProps): ReactNode {
-  const { onSelect } = props
+export function CitySelector(props: CitySelectorProps): ReactNode {
+  const { onSelect, id } = props
   return (
-    <menu>
+    <menu id={id}>
       <button onClick={() => onSelect('vancouver')}>Vancouver</button>
       <button onClick={() => onSelect('berlin')}>Berlin</button>
       <button onClick={() => onSelect('madrid')}>Madrid</button>
@@ -51,23 +52,42 @@ export default class App extends Component<PropsWithChildren, AppState> {
   render(): ReactNode {
     const { forecast, selectedCity } = this.state
     return (
-      <>
-        <h1>Current City: {selectedCity}</h1>
-        <CitySelector onSelect={ (cityName: string) => this.changeCity(cityName) }></CitySelector>
+      <main id="app-container">
+        <CitySelector
+          onSelect={(cityName: string) => this.changeCity(cityName)}
+          id="city-menu"
+        />
+
+        <div id="weather-container">
         {
           forecast !== null
             ? (
+                <>
               <DayTile
-                weather={ forecast.current }
-                temperature={56}
-                unit={'C'}
+                    weather={forecast.current}
+                    temperature={forecast.current.temp}
+                    unit={'F'}
                 title={'Today'}
-              />
+                    classNames={['current']}
+                  />
+                  {
+                    forecast.daily.map(weather => (
+                      <DayTile
+                        weather={weather}
+                        temperature={weather.temp}
+                        unit={'F'}
+                        title={getDayOfWeekFromTimestamp(weather.time, forecast.timezone)}
+                        classNames={[]}
+                        key={getDayOfWeekFromTimestamp(weather.time, forecast.timezone)}
+                      />
+                    ))
+                  }
+                </>
             )
             : <h2>No City Selected</h2>
         }
-
-      </>
+        </div>
+      </main>
     )
   }
 }

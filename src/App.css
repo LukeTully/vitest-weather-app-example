@@ -40,3 +40,35 @@
 .read-the-docs {
   color: #888;
 }
+
+#app-container {
+  display: grid;
+  grid-template-columns: repeat(14, 4rem);
+  grid-template-rows: 4rem 14rem 10rem;
+  background-color: aquamarine;
+  gap: 0.3rem;
+  padding: 0.3rem
+}
+
+#weather-container {
+  grid-column: 1 / 15;
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-template-rows: subgrid;
+  grid-row: 2/4;
+}
+
+#weather-container .day-tile:not(.current) {
+  grid-column: span 2;
+}
+
+#weather-container .day-tile.current {
+  grid-column: 1/15;
+}
+
+#city-menu {
+  grid-column: 4 / 12;
+  padding: 0;
+  display: inline-flex;
+  justify-content: space-evenly;
+}

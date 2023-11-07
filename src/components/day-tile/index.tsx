@@ -18,10 +18,11 @@ interface DayTileProps {
   unit: TempUnit
   title: string
   weather: Weather
+  classNames: string[]
 }
 
 interface DayTileState {
-  counter: number,
+  
 }
 
 
@@ -34,7 +35,7 @@ export function WeatherIcon (props: {
   const { iconWidth, iconHeight, iconIdentifier, description } = props
   // TODO: Replace this with a real dynamic url
   return (
-    <img src='#' width={iconWidth} height={iconHeight} alt={description}/>
+    <img src={`https://openweathermap.org/img/wn/${iconIdentifier}@2x.png`} width={iconWidth} height={iconHeight} alt={description}/>
   )
 }
 
@@ -44,10 +45,14 @@ export default class DayTile extends Component<DayTileProps, DayTileState> {
     return `${temp}° ${unit}`
   }
   render(): ReactNode {
-      const { title, weather, temperature, unit } = this.props
+      const { title, weather, temperature, unit, classNames} = this.props
       const formattedTemp = this.formatTemp(temperature, unit)
+      const containerClasses = [
+        'day-tile',
+        ...classNames,
+      ]
       return (
-        <div>
+        <div className={containerClasses.join(' ')}>
           <h3>
             { title }
           </h3>
