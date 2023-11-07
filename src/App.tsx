@@ -7,7 +7,9 @@ import './App.css'
 import DayTile from './components/day-tile'
 import {
   CityForecast,
+  fetchForecastByCityName,
   getDayOfWeekFromTimestamp,
+  mockFetchForecastByCityName,
   weatherForCity,
 } from './utils'
 
@@ -41,7 +43,9 @@ export default class App extends Component<PropsWithChildren, AppState> {
 
   async changeCity(cityName: string) {
     if (typeof cityName === 'string' && cityName !== this.state.selectedCity) {
-      const forecast = await weatherForCity(cityName)
+      const forecast = await weatherForCity(cityName, mockFetchForecastByCityName)
+      // const forecast = await weatherForCity(cityName, fetchForecastByCityName)
+      delete forecast.daily[0]
       this.setState({
         selectedCity: cityName,
         forecast: { ...forecast },
@@ -59,15 +63,15 @@ export default class App extends Component<PropsWithChildren, AppState> {
         />
 
         <div id="weather-container">
-        {
-          forecast !== null
-            ? (
+          {
+            forecast !== null
+              ? (
                 <>
-              <DayTile
+                  <DayTile
                     weather={forecast.current}
                     temperature={forecast.current.temp}
                     unit={'F'}
-                title={'Today'}
+                    title={'Today'}
                     classNames={['current']}
                   />
                   {
@@ -83,9 +87,9 @@ export default class App extends Component<PropsWithChildren, AppState> {
                     ))
                   }
                 </>
-            )
-            : <h2>No City Selected</h2>
-        }
+              )
+              : <h2>No City Selected</h2>
+          }
         </div>
       </main>
     )

@@ -58,6 +58,7 @@ export interface OpenWeatherMapResponseFull {
 export interface CityForecast {
   current: Weather
   daily: Weather[]
+  timezone: string
 }
 
 const staticCityCoordinateMapping: {
@@ -67,82 +68,82 @@ const staticCityCoordinateMapping: {
   'madrid': [40.398033, -3.710935],
   'berlin': [52.531677, 13.381777],
 }
-export const fetchForecastForLatLng = async (
-  latlng: number[],
-): Promise<OpenWeatherMapResponseFull> => {
-  const mockResponse: OpenWeatherMapResponseFull = {
-    lon: -0.13,
-    lat: 51.51,
-    timezone: 'America/Chicago',
-    timezone_offset: -18000,
-    current: {
-      dt: 1485789600,
-      temp: 280.32,
-      weather: {
-        id: 300,
-        main: 'Drizzle',
-        description: 'light intensity drizzle',
-        icon: '09d',
-      },
+
+type ForecastPayload = {
+  [key: string]: unknown
+  lat: number
+  lon: number
+  exclude?: string[]
+  appid: string
+}
+export const createForecastRequest = async (params: ForecastPayload): Promise<OpenWeatherMapResponseFull> => {
+  const url = `${baseUrl}${endpoint}`
+  const parsedExclude = params?.exclude?.map((e) => e.replace(/\W/i, '')).join(',') ?? ''
+  const options = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
     },
-    daily: [
-      {
-        dt: 1485789600,
-        temp: 280.32,
-        weather: {
-          id: 300,
-          main: 'Drizzle',
-          description: 'light intensity drizzle',
-          icon: '09d',
-        },
-      },
-      {
-        dt: 1485789600,
-        temp: 280.32,
-        weather: {
-          id: 300,
-          main: 'Drizzle',
-          description: 'light intensity drizzle',
-          icon: '09d',
-        },
-      },
-      {
-        dt: 1485789600,
-        temp: 280.32,
-        weather: {
-          id: 300,
-          main: 'Drizzle',
-          description: 'light intensity drizzle',
-          icon: '09d',
-        },
-      },
-      {
-        dt: 1485789600,
-        temp: 280.32,
-        weather: {
-          id: 300,
-          main: 'Drizzle',
-          description: 'light intensity drizzle',
-          icon: '09d',
-        },
-      },
-      {
-        dt: 1485789600,
-        temp: 280.32,
-        weather: {
-          id: 300,
-          main: 'Drizzle',
-          description: 'light intensity drizzle',
-          icon: '09d',
-        },
-      },
-    ],
   }
-  return Promise.resolve(
-    { ...mockResponse },
+
+  // The rather messy below type coercion is due to this issue https://github.com/microsoft/TypeScript-DOM-lib-generator/issues/1568 
+  const urlParams = new URLSearchParams(
+      {
+        ...params,
+        exclude: parsedExclude,
+      } as unknown as Record<string, string>,
   )
+  const res = await fetch(`${url}?${urlParams}`, options)
+  return res.json()
 }
 
+export const OPEN_WEATHER_APP_ID = 'b4d3928393d7438c53bb22109c916c40'
+export const baseUrl = 'https://api.openweathermap.org'
+export const endpoint = '/data/3.0/onecall'
+//lat=52.531677&lon=13.381777&exclude=minutely,hourly&appid=b4d3928393d7438c53bb22109c916c40
+export const fetchForecastForLatLng = async (
+  latlng: [number, number],
+): Promise<OpenWeatherMapResponseFull> => {
+  const forecastData = await createForecastRequest({
+    lat: latlng[0],
+    lon: latlng[1],
+    appid: OPEN_WEATHER_APP_ID,
+    exclude: [
+      'hourly',
+      'minutely',
+    ],
+  })
+
+  return forecastData
+}
+
+export const fetchForecastByCityName = (city: string): Promise<OpenWeatherMapResponseFull> => {
+  const cityCoords = staticCityCoordinateMapping[city.toLocaleLowerCase()]
+  if (cityCoords !== undefined) {
+    return fetchForecastForLatLng(cityCoords)
+  } else {
+    return Promise.reject('Could not find city in coordinate mapping')
+  }
+}
+
+export const mockFetchForecastByCityName = (city: string): Promise<OpenWeatherMapResponseFull> => {
+  const failedLookupErrorMessage = 'Could not find city in coordinate mapping'
+  const cityCoords = staticCityCoordinateMapping[city.toLocaleLowerCase()]
+  if (cityCoords !== undefined) {
+    switch (city) {
+      case 'vancouver':
+        return Promise.resolve(Vancouver)
+      case 'berlin':
+        return Promise.resolve(Berlin)
+      case 'madrid':
+        return Promise.resolve(Madrid)
+      default:
+        Promise.reject(failedLookupErrorMessage)
+    }
+  }
+  return Promise.reject(failedLookupErrorMessage)
+
+}
 
 /* Mock api for testing against real but static data */
 type ForecastFetcher = (city: string) => Promise<OpenWeatherMapResponseFull>
