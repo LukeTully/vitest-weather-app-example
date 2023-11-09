@@ -5,7 +5,6 @@ import Madrid from './assets/static/mock-responses/madrid-forecast.json';
 
 export const getDayOfWeekFromTimestamp = (
   timestamp: number,
-  timezone: string,
 ): string => {
   const daysOfWeek: {
     [key: number]: string
@@ -18,7 +17,8 @@ export const getDayOfWeekFromTimestamp = (
     5: 'Fri',
     6: 'Sat',
   }
-  /* Accepts a Unix timestamp, and timezone, and returns the day of the week */
+  /* Accepts a Unix timestamp, and returns the day of the week */
+  /* Does not (yet) account for timezones */
   const date = new Date(timestamp * 1000)
   return daysOfWeek[date.getDay()]
 }

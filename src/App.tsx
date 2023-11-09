@@ -21,15 +21,36 @@ interface AppState {
 
 interface CitySelectorProps {
   onSelect: (cityName: string) => void
+  selectedCity: string | null
   id: string
 }
 export function CitySelector(props: CitySelectorProps): ReactNode {
-  const { onSelect, id } = props
+  const { onSelect, id, selectedCity } = props
+  const cityList: {
+    [key: string]: string
+  } = {
+    'vancouver': 'Vancouver',
+    'berlin': 'Berlin',
+    'madrid': 'Madrid',
+  }
+  const getActiveItem = (currentCity: string) => {
+    return selectedCity === currentCity ? 'active': ''
+  }
   return (
-    <menu id={id}>
-      <button onClick={() => onSelect('vancouver')}>Vancouver</button>
-      <button onClick={() => onSelect('berlin')}>Berlin</button>
-      <button onClick={() => onSelect('madrid')}>Madrid</button>
+    <menu id={id} className="city-menu">
+      {
+        Object.keys(cityList).map(
+          (cityNameLowercase: string) => (
+            <button
+              onClick={() => onSelect(cityNameLowercase)}
+              className={'menu-button cityname ' + getActiveItem(cityNameLowercase)}
+              key={cityNameLowercase}
+              >
+                {cityList[cityNameLowercase]}
+            </button>      
+          ),
+        )
+      }
     </menu>
   )
 }
@@ -55,10 +76,12 @@ export default class App extends Component<PropsWithChildren, AppState> {
 
   render(): ReactNode {
     const { forecast, selectedCity } = this.state
+    
     return (
       <main id="app-container">
         <CitySelector
           onSelect={(cityName: string) => this.changeCity(cityName)}
+          selectedCity={selectedCity}
           id="city-menu"
         />
 
@@ -80,9 +103,9 @@ export default class App extends Component<PropsWithChildren, AppState> {
                         weather={weather}
                         temperature={weather.temp}
                         unit={'F'}
-                        title={getDayOfWeekFromTimestamp(weather.time, forecast.timezone)}
+                        title={getDayOfWeekFromTimestamp(weather.time)}
                         classNames={[]}
-                        key={getDayOfWeekFromTimestamp(weather.time, forecast.timezone)}
+                        key={getDayOfWeekFromTimestamp(weather.time)}
                       />
                     ))
                   }
