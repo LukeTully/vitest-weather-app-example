@@ -16,9 +16,9 @@ test('Day-tile renders', async () => {
       weather={weatherExample}
       temperature={weatherExample.temp}
       unit={'F'}
-      title={getDayOfWeekFromTimestamp(weatherExample.time, '')}
+      title={getDayOfWeekFromTimestamp(weatherExample.time)}
       classNames={[]}
-      key={getDayOfWeekFromTimestamp(weatherExample.time, '')}
+      key={getDayOfWeekFromTimestamp(weatherExample.time)}
     />,
   )
 

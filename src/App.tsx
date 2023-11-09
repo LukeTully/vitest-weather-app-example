@@ -7,7 +7,7 @@ import './App.css'
 import DayTile from './components/day-tile'
 import {
   CityForecast,
-  fetchForecastByCityName,
+  // fetchForecastByCityName,
   getDayOfWeekFromTimestamp,
   mockFetchForecastByCityName,
   weatherForCity,
