@@ -35,14 +35,14 @@ export function WeatherIcon (props: {
   const { iconWidth, iconHeight, iconIdentifier, description } = props
   // TODO: Replace this with a real dynamic url
   return (
-    <img src={`https://openweathermap.org/img/wn/${iconIdentifier}@2x.png`} width={iconWidth} height={iconHeight} alt={description}/>
+    <img src={`https://openweathermap.org/img/wn/${iconIdentifier}@4x.png`} width={iconWidth} height={iconHeight} alt={description}/>
   )
 }
 
 export default class DayTile extends Component<DayTileProps, DayTileState> {
 
   formatTemp (temp: number, unit: TempUnit): string {
-    return `${temp}° ${unit}`
+    return `${temp.toFixed(0)}° ${unit}`
   }
   render(): ReactNode {
       const { title, weather, temperature, unit, classNames} = this.props
@@ -53,16 +53,19 @@ export default class DayTile extends Component<DayTileProps, DayTileState> {
       ]
       return (
         <div className={containerClasses.join(' ')}>
-          <h3>
+          <h3 className={'day-tile-title'}>
             { title }
           </h3>
           <WeatherIcon
-            iconWidth={40}
-            iconHeight={40}
+            iconWidth={100}
+            iconHeight={100}
             iconIdentifier={weather.iconCode}
             description={weather.secondaryDescriptor}
             />
-          <h4>{formattedTemp}</h4>
+          <div className="temp-container">
+            <h4 className='day-tile-temp'>{formattedTemp}</h4>
+            <p className='weather-condition-descriptor'>{weather.primaryDescriptor}</p>
+          </div>
         </div>
       )
   }
