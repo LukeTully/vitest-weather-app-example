@@ -1,7 +1,17 @@
-import { expect, test } from 'vitest'
-import { render, waitFor } from '@testing-library/react';
-import { getDayOfWeekFromTimestamp } from '../../utils';
-import DayTile, { Weather } from '.';
+import {
+  expect,
+  test,
+} from 'vitest'
+import {
+  render,
+  waitFor,
+} from '@testing-library/react';
+import {
+  getDayOfWeekFromTimestamp,
+} from '../../utils/utils';
+import DayTile, {
+  Weather,
+} from '.';
 
 test('Day-tile renders', async () => {
   const weatherExample: Weather = {

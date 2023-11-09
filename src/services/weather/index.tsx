@@ -1,81 +1,20 @@
-import { Weather } from './components/day-tile'
-import Berlin from './assets/static/mock-responses/berlin-forecast.json';
-import Vancouver from './assets/static/mock-responses/vancouver-forecast.json';
-import Madrid from './assets/static/mock-responses/madrid-forecast.json';
+import {
+  Weather,
+} from '../../components/day-tile'
+import {
+  staticCityCoordinateMapping,
+  CityForecast,
+} from '../../utils/utils'
+import {
+  CurrentResponseItem,
+  DailyResponseItem,
+  ForecastPayload,
+  OpenWeatherMapResponseFull,
+} from '../types/weather'
+import Berlin from '../../assets/static/mock-responses/berlin-forecast.json';
+import Vancouver from '../../assets/static/mock-responses/vancouver-forecast.json';
+import Madrid from '../../assets/static/mock-responses/madrid-forecast.json';
 
-export const getDayOfWeekFromTimestamp = (
-  timestamp: number,
-): string => {
-  const daysOfWeek: {
-    [key: number]: string
-  } = {
-    0: 'Sun',
-    1: 'Mon',
-    2: 'Tues',
-    3: 'Wed',
-    4: 'Thurs',
-    5: 'Fri',
-    6: 'Sat',
-  }
-  /* Accepts a Unix timestamp, and returns the day of the week */
-  /* Does not (yet) account for timezones */
-  const date = new Date(timestamp * 1000)
-  return daysOfWeek[date.getDay()]
-}
-
-export interface OpenWeatherMapResponseItem {
-  weather: {
-    id: number
-    main: string
-    description: string
-    icon: string
-  }[]
-  dt: number
-}
-
-type DailyResponseItem = (OpenWeatherMapResponseItem & {
-  temp: {
-    day: number
-    min: number
-    max: number
-    night: number
-    eve: number
-    morn: number
-  }
-})
-
-type CurrentResponseItem = OpenWeatherMapResponseItem & { temp: number }
-export interface OpenWeatherMapResponseFull {
-  lon: number
-  lat: number
-  timezone: string
-  timezone_offset: number
-  current: CurrentResponseItem
-  daily: DailyResponseItem[]
-}
-
-/* Custom mapping of Api response properties */
-export interface CityForecast {
-  current: Weather
-  daily: Weather[]
-  timezone: string
-}
-
-const staticCityCoordinateMapping: {
-  [key: string]: [number, number],
-} = {
-  'vancouver': [49.246292, -123.116226],
-  'madrid': [40.398033, -3.710935],
-  'berlin': [52.531677, 13.381777],
-}
-
-type ForecastPayload = {
-  [key: string]: unknown
-  lat: number
-  lon: number
-  exclude?: string[]
-  appid: string
-}
 export const createForecastRequest = async (params: ForecastPayload): Promise<OpenWeatherMapResponseFull> => {
   const url = `${baseUrl}${endpoint}`
   const parsedExclude = params?.exclude?.map((e) => e.replace(/\W/i, '')).join(',') ?? ''
@@ -100,7 +39,7 @@ export const createForecastRequest = async (params: ForecastPayload): Promise<Op
 export const OPEN_WEATHER_APP_ID = 'b4d3928393d7438c53bb22109c916c40'
 export const baseUrl = 'https://api.openweathermap.org'
 export const endpoint = '/data/3.0/onecall'
-//lat=52.531677&lon=13.381777&exclude=minutely,hourly&appid=b4d3928393d7438c53bb22109c916c40
+
 export const fetchForecastForLatLng = async (
   latlng: [number, number],
 ): Promise<OpenWeatherMapResponseFull> => {
@@ -170,5 +109,4 @@ export const weatherForCity = async (city: string, fetchForecast: ForecastFetche
       ...weatherResponse.daily.map((dailyWeatherItem: DailyResponseItem): Weather => remapResponseProps(dailyWeatherItem)),
     ],
   }
-
 }

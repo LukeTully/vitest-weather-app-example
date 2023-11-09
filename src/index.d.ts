@@ -1,0 +1,1 @@
+/* Initial location for global types */

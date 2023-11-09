@@ -4,14 +4,17 @@ import {
   ReactNode,
 } from 'react'
 import './App.css'
-import DayTile from './components/day-tile'
 import {
   CityForecast,
   // fetchForecastByCityName,
-  getDayOfWeekFromTimestamp,
-  mockFetchForecastByCityName,
+  staticCityNameMapping,
+} from './utils/utils'
+import {
   weatherForCity,
-} from './utils'
+  mockFetchForecastByCityName,
+} from './services/weather'
+import WeeklyForecastGrid from './components/weekly-forecast-grid'
+import { CitySelector } from './components/city-selector'
 
 
 interface AppState {
@@ -19,47 +22,22 @@ interface AppState {
   forecast: null | CityForecast
 }
 
-interface CitySelectorProps {
-  onSelect: (cityName: string) => void
-  selectedCity: string | null
-  id: string
-}
-export function CitySelector(props: CitySelectorProps): ReactNode {
-  const { onSelect, id, selectedCity } = props
-  const cityList: {
-    [key: string]: string
-  } = {
-    'vancouver': 'Vancouver',
-    'berlin': 'Berlin',
-    'madrid': 'Madrid',
-  }
-  const getActiveItem = (currentCity: string) => {
-    return selectedCity === currentCity ? 'active': ''
-  }
-  return (
-    <menu id={id} className="city-menu">
-      {
-        Object.keys(cityList).map(
-          (cityNameLowercase: string) => (
-            <button
-              onClick={() => onSelect(cityNameLowercase)}
-              className={'menu-button cityname ' + getActiveItem(cityNameLowercase)}
-              key={cityNameLowercase}
-              >
-                {cityList[cityNameLowercase]}
-            </button>      
-          ),
-        )
-      }
-    </menu>
-  )
-}
-
-
 export default class App extends Component<PropsWithChildren, AppState> {
   state: AppState = {
     selectedCity: null,
     forecast: null,
+  }
+
+  async componentDidMount(): Promise<void> {
+    const defaultCity = Object.keys(staticCityNameMapping)[0]
+    const forecast = await weatherForCity(defaultCity, mockFetchForecastByCityName)
+
+    delete forecast.daily[0]
+
+    this.setState({
+      selectedCity: defaultCity,
+      forecast: forecast,
+    })
   }
 
   async changeCity(cityName: string) {
@@ -76,7 +54,7 @@ export default class App extends Component<PropsWithChildren, AppState> {
 
   render(): ReactNode {
     const { forecast, selectedCity } = this.state
-    
+
     return (
       <main id="app-container">
         <CitySelector
@@ -84,36 +62,13 @@ export default class App extends Component<PropsWithChildren, AppState> {
           selectedCity={selectedCity}
           id="city-menu"
         />
-
-        <div id="weather-container">
-          {
-            forecast !== null
-              ? (
-                <>
-                  <DayTile
-                    weather={forecast.current}
-                    temperature={forecast.current.temp}
-                    unit={'F'}
-                    title={'Today'}
-                    classNames={['current']}
-                  />
-                  {
-                    forecast.daily.map(weather => (
-                      <DayTile
-                        weather={weather}
-                        temperature={weather.temp}
-                        unit={'F'}
-                        title={getDayOfWeekFromTimestamp(weather.time)}
-                        classNames={[]}
-                        key={getDayOfWeekFromTimestamp(weather.time)}
-                      />
-                    ))
-                  }
-                </>
-              )
-              : <h2>No City Selected</h2>
-          }
-        </div>
+        {
+          forecast !== null
+            ? (
+              <WeeklyForecastGrid forecast={forecast} />
+            )
+            : <h2>No city has been selected</h2>
+        }
       </main>
     )
   }

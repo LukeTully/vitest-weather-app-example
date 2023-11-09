@@ -1,0 +1,125 @@
+#weather-container {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-template-rows: subgrid;
+  grid-row: 2/4;
+  background: white;
+  border-radius: 10px;
+  padding: 5px;
+  box-shadow: 0 0 25px 0 #ddd;
+  grid-column: 1/15;
+
+}
+
+.day-tile>img {
+  box-shadow: 0 0 5px #CAE2ED;
+  border-radius: 20px;
+  background-color: #FFC7BA;
+  border: 3px solid black;
+}
+
+#weather-container>.day-tile {
+  background-color: #EEF7FB;
+  color: black;
+
+
+  .day-tile-title {
+    font-weight: 300;
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+  }
+
+  .day-tile-temp {
+    font-weight: 400;
+    font-family: Bahnschrift, 'DIN Alternate', 'Franklin Gothic Medium', 'Nimbus Sans Narrow', sans-serif-condensed, sans-serif;
+    font-size: 2rem;
+    margin: 0;
+
+  }
+
+  .temp-container {
+    text-align: center;
+
+  }
+
+  .weather-condition-descriptor {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+#weather-container .day-tile:not(.current) {
+  grid-column: span 2;
+  grid-row: 2;
+
+  .day-tile-title {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+#weather-container .day-tile.current {
+  grid-column: 1 / 15;
+  border-radius: 5px 5px 0 0;
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  grid-template-rows: repeat(10, 25px);
+  grid-row: 1/2;
+  column-gap: 1rem;
+
+
+  .temp-container {
+    grid-row: 4/9;
+    grid-column: 13/17;
+    text-align: left;
+    margin: 0;
+    padding: 0;
+    align-self: center;
+    display: grid;
+    grid-template-rows: subgrid;
+
+    .weather-condition-descriptor {
+      grid-row: 4/5;
+      font-size: 1.5rem;
+      line-height: 25px;
+    }
+
+  }
+
+  .day-tile-title {
+    grid-column: 1/25;
+    overflow: hidden;
+    align-self: center;
+    margin: 0;
+    grid-row: 1/4;
+    font-size: 1.5rem;
+    grid-row-gap: 1rem;
+  }
+
+  .day-tile-temp {
+    font-size: 3rem;
+    margin: 0;
+    line-height: 3rem;
+    grid-row: 2/4;
+    align-self: center;
+
+  }
+
+  img {
+    grid-column: 10/13;
+    width: auto;
+    height: 100%;
+    grid-row: 4/9;
+    justify-self: flex-end;
+    align-self: flex-start;
+  }
+}
+
+#weather-container .day-tile.current+.day-tile:not(.current) {
+  border-radius: 0 0 0 5px;
+  padding-bottom: 1rem;
+}
+
+#weather-container>.day-tile:not(.current):last-child {
+  border-radius: 0 0 5px 0;
+}

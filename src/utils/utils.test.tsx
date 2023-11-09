@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
-
-import { getDayOfWeekFromTimestamp, mockFetchForecastByCityName, weatherForCity } from './utils';
+import { getDayOfWeekFromTimestamp } from '../utils/utils';
+import { weatherForCity, mockFetchForecastByCityName } from '../services/weather';
 
 test('Correctly parse day of the week abbreviation', () => {
   const berlinMockTime = 1699269722
