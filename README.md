@@ -22,6 +22,9 @@ I find that dangling commas make for cleaner diffs, while the quote selection is
 
 ## Testing (vitest/react-testing-library)
 I’m using [Vitest](https://vitest.dev/) for testing, since I’m using [Vite](https://vitejs.dev/) as the main build tool. Vitest is almost indistinguishable from Jest, is more performant, and is recommended by [react-testing-library](https://testing-library.com/docs/react-testing-library/intro/)
+
+I've only added a few tests as a starting point and demonstration, complete test coverage was not in scope for this project.
+
 ## Design
 I was happy to make use of grid and subgrid for even this relatively simple layout. I was somewhat constrained visually because the icons from openweathermap aren’t so versatile in terms of their colours, so I tried to choose the least offensive combination of colours that complement the bright oranges that some of them have. I think this would be a fine starting point for a more sophisticated forecasting integration, but I’d probably look for a more robust API that allows customization at request time, or returns SVG so that each shape could be dynamically adjusted. Another alternative would be a complete re-implementation using self-hosted icons, or a different custom font library.
 
