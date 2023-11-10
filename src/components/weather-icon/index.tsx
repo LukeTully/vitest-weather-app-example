@@ -6,8 +6,19 @@ export default function WeatherIcon (props: {
   iconIdentifier: string
   description: string
 }): ReactNode {
-  const { iconWidth, iconHeight, iconIdentifier, description } = props
+  const {
+    iconWidth,
+    iconHeight,
+    iconIdentifier,
+    description,
+  } = props
   return (
-    <img src={`https://openweathermap.org/img/wn/${iconIdentifier}@4x.png`} width={iconWidth} height={iconHeight} alt={description}/>
+    <img
+      src={`https://openweathermap.org/img/wn/${iconIdentifier}@4x.png`}
+      width={iconWidth}
+      height={iconHeight}
+      alt={description}
+      className='weather-icon-img'
+    />
   )
 }
