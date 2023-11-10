@@ -102,11 +102,12 @@ export const weatherForCity = async (city: string, fetchForecast: ForecastFetche
       iconCode: original.weather[0].icon,
     }
   }
+
   return {
     timezone: weatherResponse.timezone,
     current: remapResponseProps(weatherResponse.current),
     daily: [
-      ...weatherResponse.daily.map((dailyWeatherItem: DailyResponseItem): Weather => remapResponseProps(dailyWeatherItem)),
+      ...weatherResponse.daily.slice(1).map((dailyWeatherItem: DailyResponseItem): Weather => remapResponseProps(dailyWeatherItem)),
     ],
   }
 }

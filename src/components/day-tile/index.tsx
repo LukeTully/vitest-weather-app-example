@@ -2,6 +2,7 @@ import {
   Component,
   ReactNode,
 } from 'react';
+import WeatherIcon from '../weather-icon';
 
 
 export type TempUnit = 'F' | 'C'
@@ -22,28 +23,17 @@ interface DayTileProps {
 }
 
 interface DayTileState {
-  
-}
-
-
-export function WeatherIcon (props: {
-  iconWidth: number
-  iconHeight: number
-  iconIdentifier: string
-  description: string
-}): ReactNode {
-  const { iconWidth, iconHeight, iconIdentifier, description } = props
-  // TODO: Replace this with a real dynamic url
-  return (
-    <img src={`https://openweathermap.org/img/wn/${iconIdentifier}@4x.png`} width={iconWidth} height={iconHeight} alt={description}/>
-  )
+  /* Placeholder */
 }
 
 export default class DayTile extends Component<DayTileProps, DayTileState> {
 
   formatTemp (temp: number, unit: TempUnit): string {
+    /* Pair's temperature value with the selected temp unit
+    and formats the value as an integer rather than float */
     return `${temp.toFixed(0)}° ${unit}`
   }
+
   render(): ReactNode {
       const { title, weather, temperature, unit, classNames} = this.props
       const formattedTemp = this.formatTemp(temperature, unit)

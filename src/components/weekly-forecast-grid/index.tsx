@@ -1,5 +1,5 @@
 import './index.css'
-import DayTile from '../../components/day-tile'
+import DayTile, { TempUnit } from '../../components/day-tile'
 import {
   CityForecast,
   // fetchForecastByCityName,
@@ -12,19 +12,25 @@ import {
 
 type WeeklyForecastGridProps = {
   forecast: CityForecast
+  temperatureUnit: TempUnit
+  localize: (path: string) => string
 }
 export default function WeeklyForecastGrid(props: WeeklyForecastGridProps) {
   const {
     forecast,
+    temperatureUnit,
+    localize,
   } = props
 
+  const todayTitle = localize('Today')
+  
   return (
     <div id="weather-container">
       <DayTile
         weather={forecast.current}
         temperature={forecast.current.temp}
-        unit={'F'}
-        title={'Today'}
+        unit={temperatureUnit}
+        title={todayTitle}
         classNames={['current']}
       />
       {
@@ -33,7 +39,7 @@ export default function WeeklyForecastGrid(props: WeeklyForecastGridProps) {
             <DayTile
               weather={weather}
               temperature={weather.temp}
-              unit={'F'}
+              unit={temperatureUnit}
               title={getDayOfWeekFromTimestamp(weather.time)}
               classNames={[]}
               key={getDayOfWeekFromTimestamp(weather.time)}
