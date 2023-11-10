@@ -1,4 +1,4 @@
-import { Weather } from '../components/day-tile'
+import { TempUnit, Weather } from '../components/day-tile'
 export const getDayOfWeekFromTimestamp = (
   timestamp: number,
 ): string => {
@@ -17,6 +17,18 @@ export const getDayOfWeekFromTimestamp = (
   /* Does not (yet) account for timezones */
   const date = new Date(timestamp * 1000)
   return daysOfWeek[date.getDay()]
+}
+
+export const convertDegreesKelvinTo = (targetUnit: TempUnit, degrees: number): number => {
+  /* Converts Kelvin to a target temp unit, returns original value by default */
+  switch (targetUnit){
+    case 'C':
+      return degrees - 273.15   
+    case 'F':
+      return ((degrees - 273.15) * (9/5)) + 32
+    default:
+      return degrees
+  }
 }
 
 export const createTranslator = (i18nCode: string) => {

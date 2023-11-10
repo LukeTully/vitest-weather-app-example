@@ -3,6 +3,7 @@ import {
   ReactNode,
 } from 'react';
 import WeatherIcon from '../weather-icon';
+import { convertDegreesKelvinTo } from '../../utils/utils';
 
 
 export type TempUnit = 'F' | 'C'
@@ -36,7 +37,8 @@ export default class DayTile extends Component<DayTileProps, DayTileState> {
 
   render(): ReactNode {
       const { title, weather, temperature, unit, classNames} = this.props
-      const formattedTemp = this.formatTemp(temperature, unit)
+      const convertedTemp = convertDegreesKelvinTo(unit, temperature)
+      const formattedTemp = this.formatTemp(convertedTemp, unit)
       const containerClasses = [
         'day-tile',
         ...classNames,
