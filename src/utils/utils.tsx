@@ -37,7 +37,7 @@ export const createTranslator = (i18nCode: string) => {
   }
 }
 
-const translate = (i18nCode: string, path: string): string => {
+const translate = (_i18nCode: string, path: string): string => {
   /* Imagine that this uses some translation package
   and looks up a statically translated string in a json file */
   return path
